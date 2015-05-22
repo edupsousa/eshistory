@@ -10,5 +10,8 @@
   "devDependencies": {
     "chai": "^2.3.0",
     "mocha": "^2.2.5"
+  },
+  "dependencies": {
+    "escomplex-js": "^1.2.0"
   }
 }
