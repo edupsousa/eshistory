@@ -1,0 +1,14 @@
+{
+  "name": "js-project-metrics",
+  "version": "0.0.1",
+  "description": "Library and utilities to extract code metrics from JS projects commit by commit.",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "mocha": "^2.2.5"
+  }
+}
