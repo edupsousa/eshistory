@@ -12,6 +12,9 @@
     "mocha": "^2.2.5"
   },
   "dependencies": {
-    "escomplex-js": "^1.2.0"
+    "escomplex-js": "^1.2.0",
+    "nodegit": "^0.4.0",
+    "q": "^1.4.1",
+    "underscore": "^1.8.3"
   }
 }
