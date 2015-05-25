@@ -1,5 +1,10 @@
-var expect = require('chai').expect,
+var chai = require('chai'),
+    sinon = require('sinon'),
+    sinonChai = require('sinon-chai'),
+    expect = chai.expect,
     GitExplorer = require('../lib/GitExplorer.js');
+
+chai.use(sinonChai);
 
 describe('GitExplorer', function() {
 
@@ -60,6 +65,25 @@ describe('GitExplorer', function() {
                 });
             })
             .done(done);
+    });
+
+    it('Map a function to commit files', function(done) {
+        var mapFn = sinon.spy(function(file) {
+            expect(file).to.have.all.keys(['path', 'code']);
+        });
+
+        openRepository()
+            .then(function(gitExplorer) {
+                return gitExplorer.getLastCommitOnBranch('master')
+                    .then(function(commit) {
+                        return gitExplorer.mapFiles(commit.id, mapFn);
+                    })
+            })
+            .then(function(count) {
+                expect(mapFn).to.have.callCount(count);
+            })
+            .done(done);
+
     });
 
 });
