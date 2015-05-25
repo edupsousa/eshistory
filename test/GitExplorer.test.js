@@ -79,8 +79,8 @@ describe('GitExplorer', function() {
                         return gitExplorer.mapFiles(commit.id, mapFn);
                     })
             })
-            .then(function(count) {
-                expect(mapFn).to.have.callCount(count);
+            .then(function(result) {
+                expect(mapFn).to.have.callCount(result.length);
             })
             .done(done);
 
