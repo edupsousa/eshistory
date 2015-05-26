@@ -1,5 +1,4 @@
-var util = require('util'),
-    GitExplorer = require('../lib/GitExplorer.js');
+var GitExplorer = require('../lib/GitExplorer.js');
 
 var explorer = null;
 
@@ -14,6 +13,7 @@ var myFnCount = 0;
 
 var myFn = function(commit, files) {
     myFnCount++;
+
     console.log('Date ' + commit.date);
     console.log('ID ' + commit.id);
     console.log('Files: ' + files.length)

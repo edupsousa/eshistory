@@ -42,6 +42,7 @@ describe('GitExplorer', function() {
             .then(listMasterBranchCommits)
             .then(function(commits) {
                 expect(commits).to.be.a('array');
+                expect(commits).to.have.length.above(0);
             })
             .done(done);
     });
