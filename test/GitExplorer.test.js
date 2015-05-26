@@ -102,4 +102,20 @@ describe('GitExplorer', function() {
 
     });
 
+    it('Map a function to all files in all commits', function(done) {
+        var mapFn = sinon.spy(function(commit) {
+            expect(commit).to.have.all.keys(['id', 'date', 'author', 'message', 'files']);
+        });
+
+        openRepository()
+            .then(function(gitExplorer) {
+                return gitExplorer.mapToBranchCommitsAndFiles('master', mapFn);
+            })
+            .then(function(result) {
+                expect(mapFn).to.have.callCount(result.length);
+            })
+            .done(done);
+
+    });
+
 });
