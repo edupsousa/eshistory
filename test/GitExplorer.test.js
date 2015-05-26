@@ -76,8 +76,24 @@ describe('GitExplorer', function() {
             .then(function(gitExplorer) {
                 return gitExplorer.getLastCommitOnBranch('master')
                     .then(function(commit) {
-                        return gitExplorer.mapFiles(commit.id, mapFn);
+                        return gitExplorer.mapToCommitFiles(commit.id, mapFn);
                     })
+            })
+            .then(function(result) {
+                expect(mapFn).to.have.callCount(result.length);
+            })
+            .done(done);
+
+    });
+
+    it('Map a function to commits', function(done) {
+        var mapFn = sinon.spy(function(commit) {
+            expect(commit).to.have.all.keys(['id', 'date', 'author', 'message']);
+        });
+
+        openRepository()
+            .then(function(gitExplorer) {
+                return gitExplorer.mapToBranchCommits('master', mapFn);
             })
             .then(function(result) {
                 expect(mapFn).to.have.callCount(result.length);
