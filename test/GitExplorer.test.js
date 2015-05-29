@@ -17,7 +17,6 @@ describe('GitExplorer', function() {
 
     context('#', function() {
         var gitExplorer;
-        var _history;
         var _commits;
         var _files;
 
@@ -28,27 +27,14 @@ describe('GitExplorer', function() {
                 }).done(done);
         });
 
-        it('getHistory', function(done) {
-            gitExplorer.getHistory()
-                .then(function(commitHistory) {
-                    expect(commitHistory).to.be.a('array');
-                    expect(commitHistory).to.have.length.above(0);
-                    commitHistory.forEach(function(commitId) {
-                        expect(commitId).to.have.lengthOf(40);
-                    });
-                    _history = commitHistory;
-                })
-                .done(done);
-        });
-
         it('getCommits', function(done) {
-            gitExplorer.getCommits(_history)
+            gitExplorer.getCommits()
                 .then(function(commits) {
                     expect(commits).to.be.a('array');
-                    expect(commits).to.have.lengthOf(_history.length);
+                    expect(commits).to.have.length.above(0);
                     for (var i = 0; i < commits.length; i++) {
                         expect(commits[i]).to.have.all.keys(['id','date','author','message']);
-                        expect(commits[i].id).to.be.equal(_history[i]);
+                        expect(commits[i].id).to.be.a('string').with.lengthOf(40);
                     }
                     _commits = commits;
                 })
@@ -70,8 +56,8 @@ describe('GitExplorer', function() {
         it('listFiles', function(done) {
             gitExplorer.listFiles(_commits)
                 .then(function(files) {
-                    _history.forEach(function(commitId) {
-                        expect(files).to.have.property(commitId)
+                    _commits.forEach(function(commit) {
+                        expect(files).to.have.property(commit.id)
                             .that.is.an('array');
                     });
                     _files = files;
