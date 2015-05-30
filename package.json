@@ -5,6 +5,9 @@
   "scripts": {
     "test": "mocha"
   },
+  "bin": {
+    "js-project-metrics": "bin/js-project-metrics.js"
+  },
   "author": "",
   "license": "MIT",
   "devDependencies": {
@@ -14,6 +17,7 @@
     "sinon-chai": "^2.7.0"
   },
   "dependencies": {
+    "commander": "^2.8.1",
     "escomplex-js": "^1.2.0",
     "nodegit": "^0.4.0",
     "q": "^1.4.1",
