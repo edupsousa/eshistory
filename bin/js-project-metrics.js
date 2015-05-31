@@ -24,14 +24,14 @@ var repositoryPath,
     benchmarker,
     explorer,
     commits,
-    files,
-    filesContents;
+    files;
 
 startProgram()
     .then(openRepository)
     .then(getCommits)
     .then(listFiles)
-    .then(getContents)
+    //.then(getContents)
+    .then(getComplexity)
     .catch(function(reason) {
         console.error(reason.toString());
     })
@@ -77,27 +77,33 @@ function listFiles() {
         });
 }
 
-function getContents() {
-    return explorer.getFilesContents(files)
-        .then(function(_contents) {
-            filesContents = _contents;
-            if (Program.verbose) {
-                var fileCount = Object.keys(filesContents).length;
-                verboseLog('Retrieved %d distinct file contents.', fileCount)
-            }
-        })
+function getComplexity() {
+    var fileIndex = 0;
+    var complexity = {};
+    var walkFiles = explorer.createDistinctFilesWalker(files);
+    return walkFiles(function(id, contents, totalFiles) {
+        try {
+            var fileComplexity = JSMetrics(contents);
+            verboseLog('Complexity Calculation: %d of %d files.', fileIndex+1, totalFiles);
+            fileIndex++;
+        } catch (error) {
+            console.error(error);
+        }
+    }).then(function() {
+        verboseLog('Done calculating complexity for all distinct files.')
+    });
 }
 
 function verboseLog() {
     if (Program.benchmark)
-        arguments[0] = benchmarker.getElapsedTime() + ' - ' + arguments[0];
+        arguments[0] = benchmarker.getElapsedTime() + '\t' + arguments[0];
     if (Program.verbose)
         console.warn.apply(this, arguments);
 }
 
 function showFinishedBanner() {
     if (Program.benchmark) {
-        console.warn('%s - Finished.', benchmarker.getElapsedTime());
+        console.warn('%s\tFinished.', benchmarker.getElapsedTime());
         console.warn(benchmarker.getMemory());
     } else {
         verboseLog('Finished.');
