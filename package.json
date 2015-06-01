@@ -21,6 +21,7 @@
     "escomplex-js": "^1.2.0",
     "nodegit": "^0.4.0",
     "q": "^1.4.1",
+    "squel": "^4.0.0",
     "underscore": "^1.8.3"
   }
 }
