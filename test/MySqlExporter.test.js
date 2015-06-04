@@ -67,6 +67,42 @@ describe("MySqlExporter", function() {
                 "(SELECT `id` FROM `path` WHERE `path` = '/lib/foo/bar.js'));\n");
         });
 
+        it("File Metrics", function() {
+            var fileOid = "1234567890123456789012345678901234567890";
+            var metrics = {
+                loc: 10,
+                cyclomatic: 2,
+                functionCount: 1
+            };
+
+            var sqlQuery = exporter.writeFileMetrics(fileOid, metrics);
+
+            expect(sqlQuery).to.be.equal("INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`) " +
+                "VALUES (" +
+                "(SELECT `id` FROM `file_entry` " +
+                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
+                "10,2,1);\n")
+        });
+
+        it("Function metrics", function() {
+            var fileOid = "1234567890123456789012345678901234567890";
+            var metrics = {
+                name: "myFn",
+                line: 5,
+                loc: 10,
+                cyclomatic: 2,
+                params: 0
+            };
+            var sqlQuery = exporter.writeFunctionMetrics(fileOid, metrics);
+
+            expect(sqlQuery).to.be.equal(
+                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES (" +
+                "(SELECT `id` FROM `file_entry` " +
+                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
+                "'myFn',5,10,2,0);\n"
+            );
+        });
+
     });
 
     context("sql", function() {
