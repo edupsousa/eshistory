@@ -19,9 +19,9 @@
   "dependencies": {
     "commander": "^2.8.1",
     "escomplex-js": "^1.2.0",
+    "lodash": "^3.9.3",
     "nodegit": "^0.4.0",
     "q": "^1.4.1",
-    "squel": "^4.0.0",
-    "underscore": "^1.8.3"
+    "squel": "^4.0.0"
   }
 }

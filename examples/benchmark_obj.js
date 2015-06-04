@@ -81,8 +81,8 @@ function Benchmarker() {
     benchmarker.showTime('.open');
     GitExplorer.open('/Users/edupsousa/Documents/JSMetrics/repositories/express')
         .then(function(explorer) {
-            benchmarker.showTime('.getCommits');
-            explorer.getCommits()
+            benchmarker.showTime('.getCommitsAndAuthors');
+            explorer.getCommitsAndAuthors()
                 .then(function(commits) {
                     _commits = commits;
                     benchmarker.showTime('.listFiles');
