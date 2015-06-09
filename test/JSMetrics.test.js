@@ -6,10 +6,11 @@ describe('JSMetrics', function() {
     it('Analyse empty source code', function() {
         var metrics = JSMetrics('');
         expect(metrics).to.be.a('object');
-        expect(metrics).to.have.all.keys(['loc', 'cyclomatic', 'functionCount', 'functions']);
+        expect(metrics).to.have.all.keys(['loc', 'cyclomatic', 'functionCount', 'functions', 'dependencyCount']);
         expect(metrics.loc).to.be.equal(0);
         expect(metrics.cyclomatic).to.be.equal(1);
         expect(metrics.functionCount).to.be.equal(0);
+        expect(metrics.dependencyCount).to.be.equal(0);
         expect(metrics.functions).to.be.an('array')
             .with.lengthOf(0);
     });
@@ -20,6 +21,18 @@ describe('JSMetrics', function() {
         expect(metrics.loc).to.be.equal(1);
         expect(metrics.cyclomatic).to.be.equal(1);
         expect(metrics.functionCount).to.be.equal(0);
+        expect(metrics.dependencyCount).to.be.equal(0);
+        expect(metrics.functions).to.be.an('array')
+            .with.lengthOf(0);
+    });
+
+    it('Analyse source code with a dependency', function() {
+        var metrics = JSMetrics('var other = require("otherModule.js");');
+        expect(metrics).to.be.a('object');
+        expect(metrics.loc).to.be.equal(1);
+        expect(metrics.cyclomatic).to.be.equal(1);
+        expect(metrics.functionCount).to.be.equal(0);
+        expect(metrics.dependencyCount).to.be.equal(1);
         expect(metrics.functions).to.be.an('array')
             .with.lengthOf(0);
     });

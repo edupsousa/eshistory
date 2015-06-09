@@ -59,7 +59,7 @@ describe("MySqlExporter", function() {
             var path = "/lib/foo/bar.js";
 
             var sqlQuery = exporter.writeCommitFile(commit, file, path);
-            expect(sqlQuery).to.be.equal("INSERT INTO `commit_file` (`commit`,`file`,`path`) VALUES (" +
+            expect(sqlQuery).to.be.equal("INSERT INTO `commit_file` (`commit`,`file_entry`,`path`) VALUES (" +
                 "(SELECT `id` FROM `commit` " +
                 "WHERE `commit_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
                 "(SELECT `id` FROM `file_entry` " +
@@ -72,16 +72,17 @@ describe("MySqlExporter", function() {
             var metrics = {
                 loc: 10,
                 cyclomatic: 2,
-                functionCount: 1
+                functionCount: 1,
+                dependencyCount: 2
             };
 
             var sqlQuery = exporter.writeFileMetrics(fileOid, metrics);
 
-            expect(sqlQuery).to.be.equal("INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`) " +
+            expect(sqlQuery).to.be.equal("INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`,`dependencies`) " +
                 "VALUES (" +
                 "(SELECT `id` FROM `file_entry` " +
                 "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "10,2,1);\n")
+                "10,2,1,2);\n")
         });
 
         it("Function metrics", function() {
