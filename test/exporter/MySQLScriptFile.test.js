@@ -11,7 +11,7 @@ describe("MySQLScriptFile", function() {
     context("Export Items", function() {
 
         it("Project", function() {
-            var sqlQuery = exporter.writeProject("js-project-metrics");
+            var sqlQuery = exporter.exportProject("js-project-metrics");
             expect(sqlQuery).to.be.equal(
                 "INSERT INTO `project` (`name`) VALUES ('js-project-metrics');\n" +
                 "SET @project_id = (SELECT `id` FROM `project` WHERE `name` = 'js-project-metrics');\n"
@@ -29,7 +29,7 @@ describe("MySQLScriptFile", function() {
                     email: "bar@bar.com"
                 }
             ];
-            var sqlQuery = exporter.writeAuthors(authors);
+            var sqlQuery = exporter.exportAuthors(authors);
             expect(sqlQuery).to.be.equal(
                 "INSERT IGNORE INTO `author` (`name`,`email`) VALUES ('foo bar','foo@bar.com');\n" +
                 "INSERT IGNORE INTO `author` (`name`,`email`) VALUES ('bar','bar@bar.com');\n"
@@ -55,7 +55,7 @@ describe("MySQLScriptFile", function() {
                         email: "bar@bar.com"
                     }
                 }];
-            var sqlQuery = exporter.writeCommits(commits);
+            var sqlQuery = exporter.exportCommits(commits);
             expect(sqlQuery).to.be.equal(
                 "INSERT INTO `commit` (`project`,`commit_oid`,`date`,`message`,`author`) VALUES " +
                 "((@project_id),'1234567890123456789012345678901234567890','2015-01-01 12:00:00','Multiline.\\nCommit Message'," +
@@ -71,7 +71,7 @@ describe("MySQLScriptFile", function() {
                 "1234567890123456789012345678901234567890",
                 "AAAAAAAAAAAAAABBBBBBBBBBCCCCCCCCDDDDDDDD"
             ];
-            var sqlQuery = exporter.writeFileEntries(entries);
+            var sqlQuery = exporter.exportFileEntries(entries);
             expect(sqlQuery).to.be.equal(
                 "INSERT INTO `file_entry` (`project`,`entry_oid`) VALUES " +
                 "((@project_id),'1234567890123456789012345678901234567890');\n" +
@@ -82,7 +82,7 @@ describe("MySQLScriptFile", function() {
 
         it("Write Paths", function() {
             var paths = ["/lib/foo/bar.js", "/test/bar/foo.js"];
-            var sqlQuery = exporter.writePaths(paths);
+            var sqlQuery = exporter.exportPaths(paths);
             expect(sqlQuery).to.be.equal(
                 "INSERT IGNORE INTO `path` (`path`) VALUES ('/lib/foo/bar.js');\n" +
                 "INSERT IGNORE INTO `path` (`path`) VALUES ('/test/bar/foo.js');\n"
@@ -102,7 +102,7 @@ describe("MySQLScriptFile", function() {
                 }
             ];
 
-            var sqlQuery = exporter.writeCommitFiles(commit, files);
+            var sqlQuery = exporter.exportCommitFiles(commit, files);
             expect(sqlQuery).to.be.equal(
                 "INSERT INTO `commit_file` (`commit`,`file_entry`,`path`) VALUES (" +
                 "(SELECT `id` FROM `commit` " +
@@ -165,7 +165,7 @@ describe("MySQLScriptFile", function() {
                 }
             ];
 
-            var sqlQuery = exporter.writeFilesMetrics(metrics);
+            var sqlQuery = exporter.exportFilesMetrics(metrics);
             expect(sqlQuery).to.be.equal(
                 "INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`,`dependencies`) " +
                 "VALUES (" +
