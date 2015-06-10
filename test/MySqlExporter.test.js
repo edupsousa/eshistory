@@ -28,7 +28,7 @@ describe("MySqlExporter", function() {
                 date: new Date("2015-01-01T12:00:00.000Z"),
                 message: "Multiline.\nCommit Message\n",
                 author: {
-                    name: "foo bar",
+                    name: "foo'bar",
                     email: "foo@bar.com"
                 }
             };
@@ -36,7 +36,7 @@ describe("MySqlExporter", function() {
             expect(sqlQuery).to.be.equal(
                 "INSERT INTO `commit` (`project`,`commit_oid`,`date`,`message`,`author`) VALUES " +
                 "((@project_id),'1234567890123456789012345678901234567890','2015-01-01 12:00:00','Multiline.\\nCommit Message'," +
-                "(SELECT `id` FROM `author` WHERE `name`='foo bar' AND `email`='foo@bar.com'));\n"
+                "(SELECT `id` FROM `author` WHERE `name`='foo\\'bar' AND `email`='foo@bar.com'));\n"
             )
         });
 
