@@ -34,7 +34,7 @@ describe('MetricsExtractor', function() {
         it('Get files from commit list', function() {
             metricsExtractor.getFilesFromCommits(commitList)
                 .then(function(result) {
-                    expect(result).to.have.all.keys(['entries', 'files', 'paths']);
+                    expect(result).to.have.all.keys(['entries', 'files', 'paths', 'filesLength']);
                 });
         });
 
