@@ -1,10 +1,10 @@
 var chai = require('chai'),
     expect = chai.expect,
     _ = require('lodash'),
-    GitExplorer = require('../lib/GitExplorer.js');
+    GitExplorer = require('../../lib/explorer/GitExplorer.js');
 
 describe('GitExplorer', function() {
-    var path = require('path').join(__dirname, '../');
+    var path = require('path').join(__dirname, '../../');
 
     context('.open', function() {
         it('should return a GitExplorer', function(done) {

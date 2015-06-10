@@ -1,4 +1,4 @@
-var GitExplorer = require('../lib/GitExplorer');
+var GitExplorer = require('../lib/explorers/GitExplorer');
 
 function Benchmarker() {
     this.rss = 0;

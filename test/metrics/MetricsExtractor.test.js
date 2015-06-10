@@ -1,8 +1,8 @@
-var MetricsExtractor = require('../lib/MetricsExtractor.js'),
+var MetricsExtractor = require('../../lib/metrics/MetricsExtractor.js'),
     expect = require('chai').expect;
 
 describe('MetricsExtractor', function() {
-    var testRepositoryPath = require('path').join(__dirname,'../');
+    var testRepositoryPath = require('path').join(__dirname,'../../');
     var metricsExtractor;
 
     beforeEach(function(done) {

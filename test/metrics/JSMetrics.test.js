@@ -1,5 +1,5 @@
 var expect = require('chai').expect,
-    JSMetrics = require('../lib/JSMetrics.js');
+    JSMetrics = require('../../lib/metrics/JSMetrics.js');
 
 describe('JSMetrics', function() {
 

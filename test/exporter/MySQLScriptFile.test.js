@@ -1,7 +1,7 @@
 var expect = require('chai').expect,
-    MySqlExporter = require('../lib/MySqlExporter.js');
+    MySqlExporter = require('../../lib/exporter/MySQLScriptFile.js');
 
-describe("MySqlExporter", function() {
+describe("MySQLScriptFile", function() {
     var exporter;
 
     before(function() {
@@ -16,15 +16,6 @@ describe("MySqlExporter", function() {
                 "INSERT INTO `project` (`name`) VALUES ('js-project-metrics');\n" +
                 "SET @project_id = (SELECT `id` FROM `project` WHERE `name` = 'js-project-metrics');\n"
             );
-        });
-
-        it("Author", function() {
-            var author = {
-                name: "foo bar",
-                email: "foo@bar.com"
-            };
-            var sqlQuery = exporter.writeAuthor(author);
-            expect(sqlQuery).to.be.equal("INSERT IGNORE INTO `author` (`name`,`email`) VALUES ('foo bar','foo@bar.com');\n");
         });
 
         it("Authors", function() {
@@ -43,24 +34,6 @@ describe("MySqlExporter", function() {
                 "INSERT IGNORE INTO `author` (`name`,`email`) VALUES ('foo bar','foo@bar.com');\n" +
                 "INSERT IGNORE INTO `author` (`name`,`email`) VALUES ('bar','bar@bar.com');\n"
             );
-        });
-
-        it("Commit", function() {
-            var commit = {
-                id: "1234567890123456789012345678901234567890",
-                date: new Date("2015-01-01T12:00:00.000Z"),
-                message: "Multiline.\nCommit Message\n",
-                author: {
-                    name: "foo'bar",
-                    email: "foo@bar.com"
-                }
-            };
-            var sqlQuery = exporter.writeCommit(commit);
-            expect(sqlQuery).to.be.equal(
-                "INSERT INTO `commit` (`project`,`commit_oid`,`date`,`message`,`author`) VALUES " +
-                "((@project_id),'1234567890123456789012345678901234567890','2015-01-01 12:00:00','Multiline.\\nCommit Message'," +
-                "(SELECT `id` FROM `author` WHERE `name`='foo\\'bar' AND `email`='foo@bar.com'));\n"
-            )
         });
 
         it("Commits", function() {
@@ -93,13 +66,6 @@ describe("MySqlExporter", function() {
             );
         });
 
-        it("File Entry", function() {
-            var oid = "1234567890123456789012345678901234567890";
-            var sqlQuery = exporter.writeFileEntry(oid);
-            expect(sqlQuery).to.be.equal("INSERT INTO `file_entry` (`project`,`entry_oid`) VALUES " +
-                "((@project_id),'1234567890123456789012345678901234567890');\n")
-        });
-
         it("File Entries", function() {
             var entries = [
                 "1234567890123456789012345678901234567890",
@@ -114,12 +80,6 @@ describe("MySqlExporter", function() {
             );
         });
 
-        it("Path", function() {
-            var path = "/lib/foo/bar.js";
-            var sqlQuery = exporter.writePath(path);
-            expect(sqlQuery).to.be.equal("INSERT IGNORE INTO `path` (`path`) VALUES ('/lib/foo/bar.js');\n");
-        });
-
         it("Write Paths", function() {
             var paths = ["/lib/foo/bar.js", "/test/bar/foo.js"];
             var sqlQuery = exporter.writePaths(paths);
@@ -127,20 +87,6 @@ describe("MySqlExporter", function() {
                 "INSERT IGNORE INTO `path` (`path`) VALUES ('/lib/foo/bar.js');\n" +
                 "INSERT IGNORE INTO `path` (`path`) VALUES ('/test/bar/foo.js');\n"
             );
-        });
-
-        it("Commit File", function() {
-            var commit = "1234567890123456789012345678901234567890";
-            var file = "0987654321098765432109876543210987654321";
-            var path = "/lib/foo/bar.js";
-
-            var sqlQuery = exporter.writeCommitFile(commit, file, path);
-            expect(sqlQuery).to.be.equal("INSERT INTO `commit_file` (`commit`,`file_entry`,`path`) VALUES (" +
-                "(SELECT `id` FROM `commit` " +
-                "WHERE `commit_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '0987654321098765432109876543210987654321' AND project = @project_id)," +
-                "(SELECT `id` FROM `path` WHERE `path` = '/lib/foo/bar.js'));\n");
         });
 
         it("Commit Files", function() {
@@ -173,52 +119,6 @@ describe("MySqlExporter", function() {
             );
         });
 
-        it("File Metrics", function() {
-            var fileOid = "1234567890123456789012345678901234567890";
-            var metrics = {
-                loc: 10,
-                cyclomatic: 2,
-                functionCount: 2,
-                dependencyCount: 2,
-                functions: [
-                    {
-                        name: "myFn",
-                        line: 5,
-                        loc: 10,
-                        cyclomatic: 2,
-                        params: 0
-                    },
-                    {
-                        name: "otherFn",
-                        line: 1,
-                        loc: 2,
-                        cyclomatic: 3,
-                        params: 4
-                    }
-                ]
-            };
-
-            var sqlQuery = exporter.writeFileMetrics(fileOid, metrics);
-
-            expect(sqlQuery).to.be.equal(
-                "INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`,`dependencies`) " +
-                "VALUES (" +
-                "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "10,2,2,2);\n" +
-
-                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES (" +
-                "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "'myFn',5,10,2,0);\n" +
-
-                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES (" +
-                "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "'otherFn',1,2,3,4);\n"
-            )
-        });
-
         it("Files Metrics", function() {
             var metrics = [
                 {
@@ -227,9 +127,24 @@ describe("MySqlExporter", function() {
                     data: {
                         loc: 10,
                         cyclomatic: 2,
-                        functionCount: 0,
+                        functionCount: 2,
                         dependencyCount: 2,
-                        functions: []
+                        functions: [
+                            {
+                                name: "myFn",
+                                line: 5,
+                                loc: 10,
+                                cyclomatic: 2,
+                                params: 0
+                            },
+                            {
+                                name: "otherFn",
+                                line: 1,
+                                loc: 2,
+                                cyclomatic: 3,
+                                params: 4
+                            }
+                        ]
                     },
                 },
                 {
@@ -256,7 +171,17 @@ describe("MySqlExporter", function() {
                 "VALUES (" +
                 "(SELECT `id` FROM `file_entry` " +
                 "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "10,2,0,2);\n" +
+                "10,2,2,2);\n" +
+
+                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES (" +
+                "(SELECT `id` FROM `file_entry` " +
+                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
+                "'myFn',5,10,2,0);\n" +
+
+                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES (" +
+                "(SELECT `id` FROM `file_entry` " +
+                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
+                "'otherFn',1,2,3,4);\n" +
 
                 "INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`,`dependencies`) " +
                 "VALUES (" +
