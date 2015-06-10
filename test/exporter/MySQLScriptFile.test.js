@@ -31,8 +31,9 @@ describe("MySQLScriptFile", function() {
             ];
             var sqlQuery = exporter.exportAuthors(authors);
             expect(sqlQuery).to.be.equal(
-                "INSERT IGNORE INTO `author` (`name`,`email`) VALUES ('foo bar','foo@bar.com');\n" +
-                "INSERT IGNORE INTO `author` (`name`,`email`) VALUES ('bar','bar@bar.com');\n"
+                "INSERT IGNORE INTO `author` (`name`,`email`) VALUES\n" +
+                "\t('foo bar','foo@bar.com'),\n" +
+                "\t('bar','bar@bar.com');\n"
             );
         });
 
@@ -57,11 +58,10 @@ describe("MySQLScriptFile", function() {
                 }];
             var sqlQuery = exporter.exportCommits(commits);
             expect(sqlQuery).to.be.equal(
-                "INSERT INTO `commit` (`project`,`commit_oid`,`date`,`message`,`author`) VALUES " +
-                "((@project_id),'1234567890123456789012345678901234567890','2015-01-01 12:00:00','Multiline.\\nCommit Message'," +
-                "(SELECT `id` FROM `author` WHERE `name`='foo\\'bar' AND `email`='foo@bar.com'));\n" +
-                "INSERT INTO `commit` (`project`,`commit_oid`,`date`,`message`,`author`) VALUES " +
-                "((@project_id),'0987654321098765432109876543210987654321','2015-12-31 12:00:00','Commit Message'," +
+                "INSERT INTO `commit` (`project`,`commit_oid`,`date`,`message`,`author`) VALUES\n" +
+                "\t((@project_id),'1234567890123456789012345678901234567890','2015-01-01 12:00:00','Multiline.\\nCommit Message'," +
+                "(SELECT `id` FROM `author` WHERE `name`='foo\\'bar' AND `email`='foo@bar.com')),\n" +
+                "\t((@project_id),'0987654321098765432109876543210987654321','2015-12-31 12:00:00','Commit Message'," +
                 "(SELECT `id` FROM `author` WHERE `name`='bar' AND `email`='bar@bar.com'));\n"
             );
         });
@@ -73,10 +73,9 @@ describe("MySQLScriptFile", function() {
             ];
             var sqlQuery = exporter.exportFileEntries(entries);
             expect(sqlQuery).to.be.equal(
-                "INSERT INTO `file_entry` (`project`,`entry_oid`) VALUES " +
-                "((@project_id),'1234567890123456789012345678901234567890');\n" +
-                "INSERT INTO `file_entry` (`project`,`entry_oid`) VALUES " +
-                "((@project_id),'AAAAAAAAAAAAAABBBBBBBBBBCCCCCCCCDDDDDDDD');\n"
+                "INSERT INTO `file_entry` (`project`,`entry_oid`) VALUES\n" +
+                "\t((@project_id),'1234567890123456789012345678901234567890'),\n" +
+                "\t((@project_id),'AAAAAAAAAAAAAABBBBBBBBBBCCCCCCCCDDDDDDDD');\n"
             );
         });
 
@@ -84,8 +83,9 @@ describe("MySQLScriptFile", function() {
             var paths = ["/lib/foo/bar.js", "/test/bar/foo.js"];
             var sqlQuery = exporter.exportPaths(paths);
             expect(sqlQuery).to.be.equal(
-                "INSERT IGNORE INTO `path` (`path`) VALUES ('/lib/foo/bar.js');\n" +
-                "INSERT IGNORE INTO `path` (`path`) VALUES ('/test/bar/foo.js');\n"
+                "INSERT IGNORE INTO `path` (`path`) VALUES\n" +
+                "\t('/lib/foo/bar.js'),\n" +
+                "\t('/test/bar/foo.js');\n"
             );
         });
 
@@ -104,14 +104,13 @@ describe("MySQLScriptFile", function() {
 
             var sqlQuery = exporter.exportCommitFiles(commit, files);
             expect(sqlQuery).to.be.equal(
-                "INSERT INTO `commit_file` (`commit`,`file_entry`,`path`) VALUES (" +
-                "(SELECT `id` FROM `commit` " +
+                "INSERT INTO `commit_file` (`commit`,`file_entry`,`path`) VALUES\n" +
+                "\t((SELECT `id` FROM `commit` " +
                 "WHERE `commit_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
                 "(SELECT `id` FROM `file_entry` " +
                 "WHERE `entry_oid` = '0987654321098765432109876543210987654321' AND project = @project_id)," +
-                "(SELECT `id` FROM `path` WHERE `path` = '/lib/foo/bar.js'));\n" +
-                "INSERT INTO `commit_file` (`commit`,`file_entry`,`path`) VALUES (" +
-                "(SELECT `id` FROM `commit` " +
+                "(SELECT `id` FROM `path` WHERE `path` = '/lib/foo/bar.js')),\n" +
+                "\t((SELECT `id` FROM `commit` " +
                 "WHERE `commit_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
                 "(SELECT `id` FROM `file_entry` " +
                 "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
@@ -166,28 +165,26 @@ describe("MySQLScriptFile", function() {
             ];
 
             var sqlQuery = exporter.exportFilesMetrics(metrics);
+            console.log(sqlQuery);
             expect(sqlQuery).to.be.equal(
-                "INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`,`dependencies`) " +
-                "VALUES (" +
+                "SET @entry_id = " +
                 "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "10,2,2,2);\n" +
-
-                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES (" +
-                "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "'myFn',5,10,2,0);\n" +
-
-                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES (" +
-                "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id)," +
-                "'otherFn',1,2,3,4);\n" +
+                "WHERE `entry_oid` = '1234567890123456789012345678901234567890' AND project = @project_id);\n" +
 
                 "INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`,`dependencies`) " +
-                "VALUES (" +
+                "VALUES ((@entry_id),10,2,2,2);\n" +
+
+                "INSERT INTO `function_metrics` (`file_entry`,`name`,`line`,`loc`,`cyclomatic`,`params`) VALUES\n" +
+                "\t((@entry_id),'myFn',5,10,2,0),\n" +
+                "\t((@entry_id),'otherFn',1,2,3,4);\n" +
+
+                "SET @entry_id = " +
                 "(SELECT `id` FROM `file_entry` " +
-                "WHERE `entry_oid` = '0987654321098765432109876543210987654321' AND project = @project_id)," +
-                "10,1,0,1);\n"
+                "WHERE `entry_oid` = '0987654321098765432109876543210987654321' AND project = @project_id);\n" +
+
+                "INSERT INTO `file_metrics` (`file_entry`,`loc`,`cyclomatic`,`functions`,`dependencies`) " +
+                "VALUES (" +
+                "(@entry_id),10,1,0,1);\n"
             );
         });
     });
