@@ -165,7 +165,6 @@ describe("MySQLScriptFile", function() {
             ];
 
             var sqlQuery = exporter.exportFilesMetrics(metrics);
-            console.log(sqlQuery);
             expect(sqlQuery).to.be.equal(
                 "SET @entry_id = " +
                 "(SELECT `id` FROM `file_entry` " +
@@ -218,6 +217,26 @@ describe("MySQLScriptFile", function() {
         it("Create a insert with ignore clause", function() {
             var sqlQuery = exporter.sql.insert("table", {field:"value"}, {ignore: true});
             expect(sqlQuery).to.be.equal("INSERT IGNORE INTO `table` (`field`) VALUES ('value')")
+        });
+
+        it("Create a multi row insert", function() {
+            var sqlQuery = exporter.sql.insertMultiple("table", [{field:"value1"},{field:"value2"}]);
+            expect(sqlQuery).to.be.equal(
+                "INSERT INTO `table` (`field`) VALUES\n" +
+                "\t('value1'),\n" +
+                "\t('value2');")
+        });
+
+        it("A multi row insert with more than 100 rows should be broken in 2 inserts", function() {
+
+            var rows = [];
+            for (var i = 0; i < 101; i++) {
+                rows[rows.length] = {field:'value' + (i+1)};
+            }
+
+            var match = /^INSERT.+\n(\t\('value\d{1,3}'\)[,;]\n){100}INSERT.+\n\t\('value101'\);$/;
+            var sqlQuery = exporter.sql.insertMultiple("table", rows);
+            expect(sqlQuery).to.match(match);
         });
 
         it("Set a user variable", function() {

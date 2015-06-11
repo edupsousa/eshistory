@@ -21,7 +21,7 @@ describe('MetricsExtractor', function() {
             }).done(done);
     });
 
-    context('Methods that depends on a commit list', function() {
+    xcontext('Methods that depends on a commit list', function() {
         var commitList;
 
         before(function(done) {
