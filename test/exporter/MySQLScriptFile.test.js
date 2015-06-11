@@ -243,6 +243,24 @@ describe("MySQLScriptFile", function() {
             expect(sqlQuery).to.be.equal("INSERT INTO `table` (`field`) VALUES ('value')")
         });
 
+        it("Create a insert with a date value", function() {
+            var sqlQuery = exporter.sql.insert("table", {field:new Date("2015-01-01T12:00:00.000Z")});
+            expect(sqlQuery).to.be.equal("INSERT INTO `table` (`field`) VALUES ('2015-01-01 12:00:00')")
+        });
+
+        it("Create a insert with a unknown object should throw a error", function() {
+            expect(function() {
+                exporter.sql.insert("table", {field:new RegExp('')})
+            }).to.throw(Error)
+        });
+
+        it("Create a insert with special characters on value", function() {
+            var sqlQuery = exporter.sql.insert("table", {
+                field:"\0\x08\x09\x1a\n\r'"
+            });
+            expect(sqlQuery).to.be.equal("INSERT INTO `table` (`field`) VALUES ('\\0\\b\\t\\z\\n\\r\\'')");
+        });
+
         it("Create a insert with a expression value", function() {
             var sqlQuery = exporter.sql.insert("table", {field: new exporter.sql.Expression('2+2')});
             expect(sqlQuery).to.be.equal("INSERT INTO `table` (`field`) VALUES ((2+2))")
@@ -274,6 +292,11 @@ describe("MySQLScriptFile", function() {
                 "INSERT INTO `table` (`field`) VALUES\n" +
                 "\t('value1'),\n" +
                 "\t('value2');")
+        });
+
+        it("Create a multi row insert for empty array should return a empty string", function() {
+            var sqlQuery = exporter.sql.insertMultiple("table", []);
+            expect(sqlQuery).to.be.equal("");
         });
 
         it("A multi row insert with more than 100 rows should be broken in 2 inserts", function() {

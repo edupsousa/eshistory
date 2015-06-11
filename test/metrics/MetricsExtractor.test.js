@@ -1,5 +1,6 @@
 var MetricsExtractor = require('../../lib/metrics/MetricsExtractor.js'),
-    expect = require('chai').expect;
+    chai = require('chai'),
+    expect = chai.expect;
 
 describe('MetricsExtractor', function() {
     var testRepositoryPath = require('path').join(__dirname,'../../');
@@ -21,7 +22,7 @@ describe('MetricsExtractor', function() {
             }).done(done);
     });
 
-    xcontext('Methods that depends on a commit list', function() {
+    context('Methods that depends on a commit list', function() {
         var commitList;
 
         before(function(done) {
@@ -55,9 +56,15 @@ describe('MetricsExtractor', function() {
         });
 
         it('Get metrics for files in entry list', function(done) {
-            metricsExtractor.getMetricsForEntries(entryList)
+            var callCount = 0;
+            var callbackSpy = function() {
+                callCount++;
+            };
+
+            metricsExtractor.getMetricsForEntries(entryList, callbackSpy)
                 .then(function(metrics) {
                     expect(metrics).to.be.an('array').with.length.above(0);
+                    expect(callCount).to.be.equal(metrics.length);
                     for(var i = 0; i < metrics.length; i++) {
                         var fileMetric = metrics[i];
                         expect(fileMetric).to.have.property('id')
