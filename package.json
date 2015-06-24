@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "Library and utilities to extract code metrics from JS projects commit by commit.",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha test/**/*.js",
+    "test-coverage": "istanbul cover --include-all-sources _mocha test/**/*.js"
   },
   "bin": {
     "js-project-metrics": "bin/js-project-metrics.js"
@@ -12,6 +13,7 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^2.3.0",
+    "istanbul": "^0.3.16",
     "mocha": "^2.2.5",
     "sinon": "^1.14.1",
     "sinon-chai": "^2.7.0"
