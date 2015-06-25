@@ -5,8 +5,11 @@ var commander = require("commander"),
 
 commander
     .version("0.0.1")
-    .option("-v, --verbose", "Verbose output on stderr")
+    .option(
+        "-c, --child-processes <n>", "Fork processor intensive actions in <n> processes (Default: 2).",
+        parseInt)
     .option("-h, --heap-usage <n>", "Report memory heap usage every <n> seconds (on stderr).", parseInt)
+    .option("-v, --verbose", "Verbose output on stderr.")
     .usage("[options] <repository> <output-file>")
     .parse(process.argv);
 
@@ -20,5 +23,11 @@ if (commander.verbose)
 
 if (commander.heapUsage)
     config.showHeapUsage = commander.heapUsage;
+
+if (commander.childProcesses) {
+    config.maxChildProcesses = commander.childProcesses;
+} else {
+    config.maxChildProcesses = 2;
+}
 
 metricsCommand.run(commander.args[0], commander.args[1], config);
