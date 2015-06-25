@@ -1,15 +1,23 @@
 #! /usr/bin/env node
 var commander = require("commander"),
     metricsCommand = require("../lib/commands/ProjectMetricsCommand.js"),
-    config = {};
+    config = {
+        verbose: false,
+        showHeapUsage: false,
+        maxChildProcesses: 2,
+        commitFilter: {
+            branch: "master"
+        }
+    };
 
 commander
     .version("0.0.1")
-    .option(
-        "-c, --child-processes <n>", "Fork processor intensive actions in <n> processes (Default: 2).",
-        parseInt)
+    .option("-c, --child-processes <n>", "Fork tasks in <n> child processes (Default: 2).", parseInt)
     .option("-h, --heap-usage <n>", "Report memory heap usage every <n> seconds (on stderr).", parseInt)
     .option("-v, --verbose", "Verbose output on stderr.")
+
+    .option("--branch <name>", "Extract commits from the specified branch <name>. Default: master", "master")
+
     .usage("[options] <repository> <output-file>")
     .parse(process.argv);
 
@@ -24,10 +32,10 @@ if (commander.verbose)
 if (commander.heapUsage)
     config.showHeapUsage = commander.heapUsage;
 
-if (commander.childProcesses) {
+if (commander.childProcesses)
     config.maxChildProcesses = commander.childProcesses;
-} else {
-    config.maxChildProcesses = 2;
-}
+
+if (commander.branch)
+    config.commitFilter.branch = commander.branch;
 
 metricsCommand.run(commander.args[0], commander.args[1], config);
