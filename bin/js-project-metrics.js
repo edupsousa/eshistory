@@ -6,7 +6,8 @@ var commander = require("commander"),
         showHeapUsage: false,
         maxChildProcesses: 2,
         commitFilter: {
-            branch: "master"
+            branch: "master",
+            onlyTags: false
         }
     };
 
@@ -17,6 +18,7 @@ commander
     .option("-v, --verbose", "Verbose output on stderr.")
 
     .option("--branch <name>", "Extract commits from the specified branch <name>. Default: master", "master")
+    .option("--only-tags", "Extract only commits pointed by tags.")
 
     .usage("[options] <repository> <output-file>")
     .parse(process.argv);
@@ -37,5 +39,8 @@ if (commander.childProcesses)
 
 if (commander.branch)
     config.commitFilter.branch = commander.branch;
+
+if (commander.onlyTags)
+    config.commitFilter.onlyTags = true;
 
 metricsCommand.run(commander.args[0], commander.args[1], config);
