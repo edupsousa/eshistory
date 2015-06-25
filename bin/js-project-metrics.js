@@ -5,7 +5,8 @@ var commander = require("commander"),
 
 commander
     .version("0.0.1")
-    .option("-v, --verbose", "Verbose output (to stderr)")
+    .option("-v, --verbose", "Verbose output on stderr")
+    .option("-h, --heap-usage <n>", "Report memory heap usage every <n> seconds (on stderr).", parseInt)
     .usage("[options] <repository> <output-file>")
     .parse(process.argv);
 
@@ -16,5 +17,8 @@ if (commander.args.length !== 2) {
 
 if (commander.verbose)
     config.verbose = true;
+
+if (commander.heapUsage)
+    config.showHeapUsage = commander.heapUsage;
 
 metricsCommand.run(commander.args[0], commander.args[1], config);
