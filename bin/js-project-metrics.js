@@ -6,7 +6,7 @@ var commander = require("commander"),
         showHeapUsage: false,
         maxChildProcesses: 2,
         commitFilter: {
-            branch: "master",
+            branch: false,
             onlyTagged: false
         }
     };
@@ -17,7 +17,7 @@ commander
     .option("-h, --heap-usage <n>", "Report memory heap usage every <n> seconds (on stderr).", parseInt)
     .option("-v, --verbose", "Verbose output on stderr.")
 
-    .option("--branch <name>", "Extract commits from the specified branch <name>. Default: master", "master")
+    .option("--branch <name>", "Extract commits from the specified branch.")
     .option("--only-tagged-commits", "Extract only commits pointed by tags.")
 
     .usage("[options] <repository> <output-file>")
