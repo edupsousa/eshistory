@@ -25,3 +25,10 @@ list the available options.
 
 The verbose option (-v) will get you detailed information (on stderr) about the metrics extraction process. 
 We strongly reccomend the use of this flag.
+
+##Database structure
+
+The output file is a SQL file to be used with a MySQL server. The database structure must be created prior
+to the data import.
+
+We provided a SQL script in the path 'doc/database.sql' to created the necessary structure.
