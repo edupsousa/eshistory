@@ -7,7 +7,7 @@
     "test-coverage": "istanbul cover --include-all-sources _mocha test/**/*.js"
   },
   "bin": {
-    "js-project-metrics": "bin/js-project-metrics.js"
+    "eshistory": "bin/eshistory.js"
   },
   "author": "",
   "license": "MIT",

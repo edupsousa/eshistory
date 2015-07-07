@@ -7,7 +7,7 @@ var commander = require("commander"),
         maxChildProcesses: 2,
         commitFilter: {
             branch: false,
-            onlyTagged: false
+            onlyPointedByRef: false
         }
     };
 
@@ -18,7 +18,7 @@ commander
     .option("-v, --verbose", "Verbose output on stderr.")
 
     .option("--branch <name>", "Extract commits from the specified branch.")
-    .option("--only-tagged-commits", "Extract only commits pointed by tags.")
+    .option("--only-ref-commits", "Extract only commits pointed by references.")
 
     .usage("[options] <repository> <output-file>")
     .parse(process.argv);
@@ -40,7 +40,7 @@ if (commander.childProcesses)
 if (commander.branch)
     config.commitFilter.branch = commander.branch;
 
-if (commander.onlyTaggedCommits)
-    config.commitFilter.onlyTagged = true;
+if (commander.onlyRefCommits)
+    config.commitFilter.onlyPointedByRef = true;
 
 metricsCommand.run(commander.args[0], commander.args[1], config);
