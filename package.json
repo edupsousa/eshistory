@@ -1,6 +1,7 @@
 {
   "name": "eshistory",
   "version": "0.0.4",
+  "license": "MIT",
   "author": "Eduardo P de Sousa <edupsousa@ifsp.edu.br>",
   "repository": "http://github.com/edupsousa/eshistory",
   "description": "Library and utilities to extract code metrics from JS projects commit by commit.",
