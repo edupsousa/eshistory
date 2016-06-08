@@ -1,6 +1,6 @@
 {
   "name": "eshistory",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Eduardo P de Sousa <edupsousa@ifsp.edu.br>",
   "repository": "http://github.com/edupsousa/eshistory",
   "description": "Library and utilities to extract code metrics from JS projects commit by commit.",
@@ -20,10 +20,10 @@
     "sinon-chai": "^2.7.0"
   },
   "dependencies": {
-    "commander": "^2.8.1",
+    "commander": "^2.9.0",
     "escomplex-js": "^1.2.0",
-    "lodash": "^3.9.3",
-    "nodegit": "^0.4.0",
-    "q": "^1.4.1"
+    "lodash": "^4.13.1",
+    "nodegit": "^0.13.1",
+    "q": "^2.0.3"
   }
 }
